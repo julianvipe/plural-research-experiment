@@ -64,7 +64,7 @@ export default function Comments(props: any) {
   const [Comments, setComments] = useState([Comment]);
 
   const getComments = async () => {
-		const res = await fetch('https://jsonplaceholder.typicode.com/comments?postId=1');
+		const res = await fetch('https://jsonplaceholder.typicode.com/comments');
 		return res.json();
 	};
   const {data, error, isLoading} = useQuery('randomFacts', getComments);
@@ -132,6 +132,7 @@ export default function Comments(props: any) {
           height={24}
           className="justify-self-end mx-2"
           priority
+          key={i}
         />
       );
     }
