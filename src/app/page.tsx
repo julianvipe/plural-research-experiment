@@ -23,16 +23,13 @@ export default function Home() {
   }
   return (
     <main className="justify-center items-center">
-       <style>{`
-        :root {
-          --playfair-font: ${playfair.style.fontFamily};
-        }
-      `}</style>
+      <div className={playfair.className}>
       <Header Login={toggleBool} isLogin={myBool}/>
       <QueryClientProvider client={queryClient}>
       {myBool ? <Body/> : <Comments logOut={toggleBool}/> }
       </QueryClientProvider>
       <Footer/>
+      </div>
     </main>
   );
 }
