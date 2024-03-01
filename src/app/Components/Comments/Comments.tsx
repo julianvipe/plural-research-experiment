@@ -5,7 +5,8 @@ import styles from "./Comments.module.css";
 import CommentCard from "../CommentCard/CommentCard";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { useQuery } from "react-query";
+import { useQuery } from "react-query"
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const IconBtn = styled.button`
   font-size: 1em;
@@ -36,7 +37,6 @@ ButtonC.defaultProps = {
     textC: "white",
   },
 };
-// Define what props.theme will look like
 const theme = {
   textC: "#222222",
   buttonC: "white",
@@ -48,6 +48,12 @@ export default function Comments(props: any) {
       start.getTime() + Math.random() * (end.getTime() - start.getTime())
     );
   }
+    const {
+      transcript,
+      listening,
+      resetTranscript,
+      browserSupportsSpeechRecognition
+    } = useSpeechRecognition();
 
   const [Comment, setComment] = useState({
     userName: "",
@@ -73,12 +79,10 @@ export default function Comments(props: any) {
         };
         addComments(comtemp);
       });
-    
     deleteComment(0);
     }
     
   }, [data]);
-
   function handleChange(event: any) {
     const { value } = event.target;
     setComment((prevComment) => {
@@ -90,7 +94,6 @@ export default function Comments(props: any) {
       };
     });
   }
-
   function submitComment(event: any) {
     if (Comment.content !== "") {
       addComments(Comment);
@@ -99,6 +102,7 @@ export default function Comments(props: any) {
         content: "",
         date: "",
       });
+      resetTranscript();
       event.preventDefault();
     }
   }
@@ -134,8 +138,26 @@ export default function Comments(props: any) {
     return <div className="flex">{hearts}</div>;
   }
 
+  function componentDidUpdate(){
+    console.log(transcript);
+      setComment((prevComment) => {
+        return {
+          ...prevComment,
+          content: transcript,
+          userName: "@mu?",
+          date: randomDate(new Date(2012, 0, 1), new Date()).toDateString(),
+        };
+      });
+  }
+
+  const startListening = () => SpeechRecognition.startListening({ continuous: true }).then(componentDidUpdate);
+  const stopListening = () => SpeechRecognition.stopListening().then(componentDidUpdate);
+
   if (error) return <div>Request Failed</div>;
 	if (isLoading) return <div>Loading...</div>;
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesnt support speech recognition.</span>;
+  }
 
   return (
     <div className={styles.body}>
@@ -151,12 +173,15 @@ export default function Comments(props: any) {
         <ButtonC onClick={submitComment}>+</ButtonC>
       </div>
       <div>
-        <h4 className="text-base font-medium">Leave a Comment:</h4>
+        <h4 className="text-2xl font-medium">Leave a Comment:</h4>
         <TextArea
           placeholder="Write here..."
           onChange={handleChange}
-          value={Comment.content}
-        />
+          value={Comment.content===""?transcript:Comment.content}
+        /> 
+        <p className="text-xl">Microphone: {listening ? 'on' : 'off'}</p>
+        <ButtonC onClick={startListening}>Start</ButtonC>
+        <ButtonC onClick={stopListening}>Stop</ButtonC>
       </div>
       <div className={styles.commentsArea}>
         <h3 className="text-2xl font-semibold">

@@ -1,4 +1,5 @@
 "use client";
+import 'regenerator-runtime/runtime';
 import Header from "./Components/Header/Header"
 import Footer from "./Components/Footer/Footer";
 import Body from "./Components/Body/Body";
