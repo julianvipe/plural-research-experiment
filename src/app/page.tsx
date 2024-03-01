@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider,useQuery } from 'react-query'
 
 const queryClient = new QueryClient()
 
-export const playfair = Playfair(
+const playfair = Playfair(
 {
   subsets:['latin']
 });
