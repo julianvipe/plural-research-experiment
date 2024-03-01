@@ -23,7 +23,7 @@ export default function Home() {
   }
   return (
     <main className="justify-center items-center">
-       <style jsx global>{`
+       <style>{`
         :root {
           --playfair-font: ${playfair.style.fontFamily};
         }
