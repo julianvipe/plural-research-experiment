@@ -180,8 +180,8 @@ export default function Comments(props: any) {
           value={Comment.content===""?transcript:Comment.content}
         /> 
         <p className="text-xl">Microphone: {listening ? 'on' : 'off'}</p>
-        <ButtonC onClick={startListening}>Start</ButtonC>
-        <ButtonC onClick={stopListening}>Stop</ButtonC>
+        <ButtonC onClick={startListening}>Start Recording</ButtonC>
+        <ButtonC onClick={stopListening}>Stop Recording</ButtonC>
       </div>
       <div className={styles.commentsArea}>
         <h3 className="text-2xl font-semibold">
