@@ -1,0 +1,27 @@
+.header{
+    display: grid;
+    margin: 2rem;
+    grid-auto-rows: 1fr;
+    grid-template-columns: 1fr 0.5fr ;
+}
+.h1{
+    font-size: 50px;
+}
+.h3{
+    font-size: 20px;
+    font-style: italic;
+}
+.button{
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    height: 20px;
+}
+
+.links{
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 20px;
+    height: 20px;
+    text-decoration: underline;
+}
