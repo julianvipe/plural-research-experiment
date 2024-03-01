@@ -1,6 +1,5 @@
 import styled, { css, ThemeProvider } from "styled-components";
 import React, { useState, useEffect } from "react";
-import Button from "../Buttons/Buttons";
 import styles from "./Comments.module.css";
 import CommentCard from "../CommentCard/CommentCard";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -70,16 +69,30 @@ export default function Comments(props: any) {
   const {data, error, isLoading} = useQuery('randomFacts', getComments);
   
   useEffect(() => {
-    if(data){
+    const localData=localStorage.getItem("CommentsKey");
+    if(localData){
+      JSON.parse(localData).map((localComment:any)=>{
+        const comtemp = {
+          content: localComment.content,
+          userName: localComment.userName,
+          date: localComment.date,
+        };
+        if(comtemp.content!==""){
+          addComments(comtemp);
+        }
+      })
+    }
+    else if(data){
       data.map((ApiComment: any) => {
         const comtemp = {
           content: ApiComment.body,
           userName: ApiComment.email,
           date: randomDate(new Date(2012, 0, 1), new Date()).toDateString(),
         };
-        addComments(comtemp);
+        if(comtemp.content!==""){
+          addComments(comtemp);
+        }
       });
-    deleteComment(0);
     }
     
   }, [data]);
@@ -89,7 +102,7 @@ export default function Comments(props: any) {
       return {
         ...prevComment,
         content: value,
-        userName: "@mu?",
+        userName: "@userName",
         date: randomDate(new Date(2012, 0, 1), new Date()).toDateString(),
       };
     });
@@ -120,7 +133,9 @@ export default function Comments(props: any) {
       });
     });
   }
-
+  useEffect(() => {
+    localStorage.setItem('CommentsKey', JSON.stringify(Comments));
+  });
   function hearts() {
     let hearts = [];
     for (let i = 0; i < 4; i++) {
