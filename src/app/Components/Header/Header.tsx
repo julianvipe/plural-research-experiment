@@ -16,17 +16,17 @@ export default function Header(props: any) {
           priority
         />
         <div className="col-span-2 justify-self-auto py-9">
-          <h1 className={styles.h1}>Plural Research Experiment</h1>
+          <h1 className={styles.h1}>{'Plural Research Experiment'}</h1>
           <h3 className={styles.h3}>
-            An experiment in research independence and innocation
+            {'An experiment in research independence and innocation'}
           </h3>
         </div>
       </div>
       <div className="flex justify-center h-16">
         {props.isLogin ? (<p></p>) : (
           <div className="grid grid-cols-2 p-5">
-            <p className={styles.links}>Agenda</p>
-            <p className={styles.links}>Account</p>
+            <p className={styles.links}>{'Agenda'}</p>
+            <p className={styles.links}>{'Account'}</p>
           </div>
         )}
         <Button

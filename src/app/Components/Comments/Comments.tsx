@@ -154,10 +154,10 @@ export default function Comments(props: any) {
   const startListening = () => SpeechRecognition.startListening({ continuous: true }).then(componentDidUpdate);
   const stopListening = () => SpeechRecognition.stopListening().then(componentDidUpdate);
 
-  if (error) return <div>Request Failed</div>;
-	if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{'Request Failed'}</div>;
+	if (isLoading) return <div>{'Loading...'}</div>;
   if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesnt support speech recognition.</span>;
+    return <span>{'Browser doesnt support speech recognition.'}</span>;
   }
 
   return (
@@ -165,28 +165,28 @@ export default function Comments(props: any) {
       <IconBtn onClick={props.logOut}>
         <ArrowLeftIcon className="w-6 h-6"></ArrowLeftIcon>
       </IconBtn>
-      <h2 className="text-3xl/[32px] font-semibold">Do you like appples?</h2>
+      <h2 className="text-3xl/[32px] font-semibold">{'Do you like appples?'}</h2>
       <h3>{hearts()}</h3>
       <div>
         <ThemeProvider theme={theme}>
-          <ButtonC onClick={deleteComment}>-</ButtonC>
+          <ButtonC onClick={deleteComment}>{'-'}</ButtonC>
         </ThemeProvider>
-        <ButtonC onClick={submitComment}>+</ButtonC>
+        <ButtonC onClick={submitComment}>{'+'}</ButtonC>
       </div>
       <div>
-        <h4 className="text-2xl font-medium">Leave a Comment:</h4>
+        <h4 className="text-2xl font-medium">{'Leave a Comment:'}</h4>
         <TextArea
           placeholder="Write here..."
           onChange={handleChange}
           value={Comment.content===""?transcript:Comment.content}
         /> 
-        <p className="text-xl">Microphone: {listening ? 'on' : 'off'}</p>
-        <ButtonC onClick={startListening}>Start Recording</ButtonC>
-        <ButtonC onClick={stopListening}>Stop Recording</ButtonC>
+        <p className="text-xl">{'Microphone:'} {listening ? 'on' : 'off'}</p>
+        <ButtonC onClick={startListening}>{'Start Recording'}</ButtonC>
+        <ButtonC onClick={stopListening}>{'Stop Recording'}</ButtonC>
       </div>
       <div className={styles.commentsArea}>
         <h3 className="text-2xl font-semibold">
-          Total Comments({Comments.length}):
+          {'Total Comments'}({Comments.length}):
         </h3>
         {Comments.map((CommentItem, index) => {
           return (
