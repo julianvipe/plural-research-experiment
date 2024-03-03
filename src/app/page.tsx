@@ -5,8 +5,8 @@ import Footer from "./Components/Footer/Footer";
 import Body from "./Components/Body/Body";
 import Comments from "./Components/Comments/Comments";
 import { Playfair } from "next/font/google";
-import React, { useState, useEffect } from "react";
-import { QueryClient, QueryClientProvider,useQuery } from 'react-query'
+import React, { useState } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 

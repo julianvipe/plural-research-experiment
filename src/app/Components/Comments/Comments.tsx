@@ -4,10 +4,13 @@ import styles from "./Comments.module.css";
 import CommentCard from "../CommentCard/CommentCard";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { useQuery } from "react-query";
+import { useQuery,useQueryClient, } from "@tanstack/react-query";
+import Button from "../Buttons/Buttons";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import {getApiComments} from "../../api/api";
+
 
 const IconBtn = styled.button`
   font-size: 1em;
@@ -56,6 +59,8 @@ export default function Comments(props: any) {
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
 
+  const queryClient=useQueryClient();
+
   const [Comment, setComment] = useState({
     userName: "",
     content: "",
@@ -64,27 +69,19 @@ export default function Comments(props: any) {
 
   const [Comments, setComments] = useState([Comment]);
 
-  const getComments = async () => {
-    if(localStorage.getItem("CommentsKey")){
-      return [];
-    }else{
-      const res = await fetch("https://jsonplaceholder.typicode.com/comments");
-    return res.json();
-    }
-  };
-  const { data, error, isLoading } = useQuery("randomComments", getComments, {
-    onSuccess: (data) =>
-      data.map((ApiComment: any) => {
-        const comtemp = {
-          content: ApiComment.body,
-          userName: ApiComment.email,
-          date: randomDate(new Date(2012, 0, 1), new Date()).toDateString(),
-        };
-        if (comtemp.content !== "") {
-          addComments(comtemp);
-        }
-      }),
-  });
+  const [nHearts,setNHearts] = useState(0);
+
+  
+
+  // const getComments = async () => {
+  //   if(localStorage.getItem("CommentsKey")){
+  //     return [];
+  //   }else{
+  //     const res = await fetch("https://jsonplaceholder.typicode.com/comments");
+  //   return res.json();
+  //   }
+  // };
+  const query = useQuery({queryKey:['comments'],queryFn:getApiComments});
 
   useEffect(() => {
     setComments([]);
@@ -101,7 +98,20 @@ export default function Comments(props: any) {
         }
       });
     }
+    else if(query.data){
+     query.data.map((apiComment:any)=>{
+      const comtemp={
+        content:apiComment.body,
+        userName:apiComment.email,
+        date:randomDate(new Date(2012, 0, 1), new Date()).toDateString(),
+      }
+      if (comtemp.content !== "") {
+        addComments(comtemp);
+      }
+     })   
+    }
   }, []);
+
   function handleChange(event: any) {
     const { value } = event.target;
     setComment((prevComment) => {
@@ -139,9 +149,25 @@ export default function Comments(props: any) {
       });
     });
   }
+
+  function addHearts(){
+    if(nHearts<5){
+    let temp=nHearts+1;
+    setNHearts(temp);
+    }
+  }
+
+  function substractHearts(){
+    if(nHearts>0){
+    let temp=nHearts-1;
+    setNHearts(temp);
+  }
+  }
+
+
   function hearts() {
     let hearts = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < nHearts; i++) {
       hearts.push(
         <Image
           src="/heart.png"
@@ -179,8 +205,6 @@ export default function Comments(props: any) {
   const stopListening = () =>
     SpeechRecognition.stopListening().then(componentDidUpdate);
 
-  if (error) return <div>{"Request Failed"}</div>;
-  if (isLoading) return <div>{"Loading..."}</div>;
   if (!browserSupportsSpeechRecognition) {
     return <span>{"Browser doesnt support speech recognition."}</span>;
   }
@@ -196,9 +220,9 @@ export default function Comments(props: any) {
       <h3>{hearts()}</h3>
       <div>
         <ThemeProvider theme={theme}>
-          <ButtonC onClick={deleteComment}>{"-"}</ButtonC>
+          <ButtonC onClick={substractHearts}>{"-"}</ButtonC>
         </ThemeProvider>
-        <ButtonC onClick={submitComment}>{"+"}</ButtonC>
+        <ButtonC onClick={addHearts}>{"+"}</ButtonC>
       </div>
       <div>
         <h4 className="text-2xl font-medium">{"Leave a Comment:"}</h4>
@@ -207,6 +231,7 @@ export default function Comments(props: any) {
           onChange={handleChange}
           value={Comment.content === "" ? transcript : Comment.content}
         />
+        <Button name="Add commment" onClick={submitComment}></Button>
         <p className="text-xl">
           {"Microphone:"} {listening ? "on" : "off"}
         </p>
