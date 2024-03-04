@@ -59,34 +59,41 @@ export default function Comments(props: any) {
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
 
-  const queryClient=useQueryClient();
-
   const [Comment, setComment] = useState({
     userName: "",
     content: "",
     date: "",
   });
 
-  const [Comments, setComments] = useState([Comment]);
+  const query = useQuery({queryKey:['comments'],queryFn:async()=>{
+    const data =  await getApiComments(); 
+    const localData = localStorage.getItem("CommentsKey");
+    if (localData===null && Comments.length===0){
+      data.map((apiComment: any) => {
+        const comtemp = {
+          content: apiComment.body,
+          userName: apiComment.email,
+          date: randomDate(new Date(2012, 0, 1), new Date()).toDateString(),
+        };
+        if (comtemp.content !== "") {
+          addComments(comtemp);
+        }
+      });
+    }
+    return data;
+  }});
 
-  const [nHearts,setNHearts] = useState(0);
+  const [Comments, setComments] = useState<any[]>([]);
 
-  
-
-  // const getComments = async () => {
-  //   if(localStorage.getItem("CommentsKey")){
-  //     return [];
-  //   }else{
-  //     const res = await fetch("https://jsonplaceholder.typicode.com/comments");
-  //   return res.json();
-  //   }
-  // };
-  const query = useQuery({queryKey:['comments'],queryFn:getApiComments});
+  const [nHearts,setNHearts] = useState(()=>{
+    const localData = localStorage.getItem("ThemeHearts");
+    return localData?+localData:0;
+  });
 
   useEffect(() => {
-    setComments([]);
+     setComments([]);
     const localData = localStorage.getItem("CommentsKey");
-    if (localData) {
+    if (localData && Comments.length===0) {
       JSON.parse(localData).map((localComment: any) => {
         const comtemp = {
           content: localComment.content,
@@ -98,19 +105,7 @@ export default function Comments(props: any) {
         }
       });
     }
-    else if(query.data){
-     query.data.map((apiComment:any)=>{
-      const comtemp={
-        content:apiComment.body,
-        userName:apiComment.email,
-        date:randomDate(new Date(2012, 0, 1), new Date()).toDateString(),
-      }
-      if (comtemp.content !== "") {
-        addComments(comtemp);
-      }
-     })   
-    }
-  }, []);
+  },[]);
 
   function handleChange(event: any) {
     const { value } = event.target;
@@ -154,6 +149,7 @@ export default function Comments(props: any) {
     if(nHearts<5){
     let temp=nHearts+1;
     setNHearts(temp);
+
     }
   }
 
@@ -183,8 +179,11 @@ export default function Comments(props: any) {
     return <div className="flex">{hearts}</div>;
   }
   useEffect(() => {
-    if (Comments.length > 1) {
+    if (Comments.length > 0) {
       localStorage.setItem("CommentsKey", JSON.stringify(Comments));
+    }
+    if(nHearts>=0){
+    localStorage.setItem("ThemeHearts", JSON.stringify(nHearts));
     }
   });
   function componentDidUpdate() {
@@ -256,3 +255,4 @@ export default function Comments(props: any) {
     </div>
   );
 }
+
